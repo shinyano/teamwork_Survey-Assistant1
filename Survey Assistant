@@ -18,19 +18,17 @@ global answert
 answert=''
 global typeall
 global answerall
-##global typeallw
-##global quesallw
-global quesall
-
+global typeallw
+global quesallw
+global answerall
 
 typeall=[]
 typeall.append('name')
-quesall=[]
 answerall={}
 
-##typeallw=[0]*count
-##quesallw=[0]*count
-##answallw={}
+typeallw=[0]*count
+quesallw=[0]*count
+answallw={}
 
 quesxl=openpyxl.Workbook()
 quesxl.create_sheet(index=0,title='Sheet 1')
@@ -214,7 +212,7 @@ def savef():
         surv_count+=1
 
         askokcancel(title='Success',message='Saved.')
-        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
+        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=9,column=0)
 
         surveyw.withdraw()
 
@@ -268,7 +266,7 @@ def survsave():
 ##        surv_count+=1
 ##
 ##        askokcancel(title='Success',message='Saved.')
-##        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
+##        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=9,column=0)
 ##
 ##        surveyw.withdraw()
         
@@ -382,74 +380,24 @@ def createsurvey():
 #####################################################################################################################
 
 
-def check_blank(quesi,tixingi):
-        global quesall
-        
+def addfe():
+        global count
+        quesi=quese.get()
+        tixingi=tixinge.get()
         if tixingi=='--please select--':
                 showerror(title='Error',message="Type of Your Question Is Not Selected!")
         elif not tixingi=='blank to fill':
                 showerror(title='Error',message="Question Type Error")
         elif quesi=='':
                 showerror(title='Error',message="Question Expected")
-        elif quesi in quesall:
-                showerror(title='Error',message='Question Added Before')
         else:
-                return True
-
-def check_choice(quesi2,tixingi2,seleiA,seleiB,seleiC,seleiD,seleiE):
-        global quesall
-
-        selelist=[seleiA,seleiB,seleiC,seleiD,seleiE]
-        
-        if tixingi2=='--please select--':
-                showerror(title='Error',message="Type of Your Question Is Not Selected!")
-        elif not (tixingi2 == 'multiple choice' or tixingi2=='single choice'):
-                showerror(title='Error',message="Question Type Error")
-        elif seleiA=='' and seleiB=='' and seleiC=='' and seleiD=='' and seleiE=='':
-                showerror(title='Error',message="Selections Expected")
-        elif quesi2 in quesall:
-                showerror(title='Error',message='Question Added Before')
-        else:
-                return True
-
-def cancelfe():
-        quese.delete(0,END)
-        tixinge.set('blank to fill')
-
-def cancelfc():
-        quese2.delete(0,END)
-        tixinge2.set('--please select--')
-        seleeA.delete(0,END)
-        seleeB.delete(0,END)
-        seleeC.delete(0,END)
-        seleeD.delete(0,END)
-        seleeE.delete(0,END)
-
-def addfe():
-        global count
-        global quesall
-        quesi=quese.get()
-        tixingi=tixinge.get()
-
-##        if tixingi=='--please select--':
-##                showerror(title='Error',message="Type of Your Question Is Not Selected!")
-##        elif not tixingi=='blank to fill':
-##                showerror(title='Error',message="Question Type Error")
-##        elif quesi=='':
-##                showerror(title='Error',message="Question Expected")
-##        elif quesi in quesall:
-##                showerror(title='Error',message='Question Added Before')
-##        else:
-
-        if check_blank(quesi,tixingi):
                 questuple.append('Type : '+tixingi+'  ||  Question : '+quesi)
                 quesvar.set(tuple(questuple))
+##                Questions.insert(END,'Type:'+tixingi+'  ||  Question:'+quesi)
                 question[count]=[tixingi,quesi]
-                quesall.append(quesi)
                 count+=1
                 quessh['A%d'%(count)].value=tixingi
                 quessh['B%d'%(count)].value=quesi
-                cancelfe()
 
 def addfc():
         global count
@@ -460,48 +408,49 @@ def addfc():
         seleiC=seleeC.get()
         seleiD=seleeD.get()
         seleiE=seleeE.get()
-        
-##        if tixingi2=='--please select--':
-##                showerror(title='Error',message="Type of Your Question Is Not Selected!")
-##        elif not (tixingi2 == 'multiple choice' or tixingi2=='single choice'):
-##                showerror(title='Error',message="Question Type Error")
-##        elif seleiA=='' and seleiB=='' and seleiC=='' and seleiD=='' and seleiE=='':
-##                showerror(title='Error',message="Selections Expected")
-##        elif quesi2 in quesall:
-##                showerror(title='Error',message='Question Added Before')
-##        else:
-        if check_choice(quesi2,tixingi2,seleiA,seleiB,seleiC,seleiD,seleiE):
+        if tixingi2=='--please select--':
+                showerror(title='Error',message="Type of Your Question Is Not Selected!")
+        elif not (tixingi2 == 'multiple choice' or tixingi2=='single choice'):
+                showerror(title='Error',message="Question Type Error")
+        elif seleiA=='' and seleiB=='' and seleiC=='' and seleiD=='' and seleiE=='':
+                showerror(title='Error',message="Selections Expected")
+        else:
                 question[count]=[tixingi2,{quesi2:[]}]
                 selecount[quesi2]=0
                 questuple.append('Type : '+tixingi2+'  ||  Question : '+quesi2)
-                quesall.append(quesi2)
 
+##                Questions.insert(END,'Type:'+tixingi2+'  ||  Question:'+quesi2)
                 if not seleiA=='':
                         questuple.append('    A '+seleiA)
+##                        Questions.insert(END,'    A '+seleiA)
                         question[count][1][quesi2].append(seleiA)
                         selecount[quesi2]+=1
                 else:
                         seleiA='___'
                 if not seleiB=='':
                         questuple.append('    B '+seleiB)
+##                        Questions.insert(END,'    B '+seleiB)
                         question[count][1][quesi2].append(seleiB)
                         selecount[quesi2]+=1
                 else:
                         seleiB='___'
                 if not seleiC=='':
                         questuple.append('    C '+seleiC)
+##                        Questions.insert(END,'    C '+seleiC)
                         question[count][1][quesi2].append(seleiC)
                         selecount[quesi2]+=1
                 else:
                         seleiC='___'
                 if not seleiD=='':
                         questuple.append('    D '+seleiD)
+##                        Questions.insert(END,'    D '+seleiD)
                         question[count][1][quesi2].append(seleiD)
                         selecount[quesi2]+=1
                 else:
                         seleiD='___'
                 if not seleiE=='':
                         questuple.append('    E '+seleiE)
+##                        Questions.insert(END,'    E '+seleiE)
                         question[count][1][quesi2].append(seleiE)
                         selecount[quesi2]+=1
                 else:
@@ -517,179 +466,23 @@ def addfc():
                 quessh['E%d'%(count)].value=seleiC
                 quessh['F%d'%(count)].value=seleiD
                 quessh['G%d'%(count)].value=seleiE
-                cancelfc()
         
             
 
+	
+def cancelfe():
+        quese.delete(0,END)
+        tixinge.set('blank to fill')
 
-def modifyfe():
-        global infolist
-        m=0
+def cancelfc():
+        quese2.delete(0,END)
+        tixinge2.set('--please select--')
+        seleeA.delete(0,END)
+        seleeB.delete(0,END)
+        seleeC.delete(0,END)
+        seleeD.delete(0,END)
+        seleeE.delete(0,END)
 
-        quesi=quese.get()
-        tixingi=tixinge.get()
-
-        if check_blank(quesi,tixingi):
-                for i in range(len(questuple)):
-                        if infolist[2] in questuple[i]:
-                                questuple[i]='Type : '+tixingi+'  ||  Question : '+quesi
-                for i in question.keys():
-                        if question[i][0]=='blank to fill':
-                                if infolist[2]==question[i][1]:
-                                        question[i][1]=quesi
-                                        m=i
-                quesvar.set(tuple(questuple))
-                
-        quesall.remove(infolist[2])
-        quesall.append(quesi)
-        quessh['A%d'%(m+1)].value=tixingi
-        quessh['B%d'%(m+1)].value=quesi
-        cancelfe()
-
-def deletefe():
-        global infolist
-        global count
-        m=0
-
-##        print(infolist)
-
-        for i in range(len(questuple)):
-                if infolist[2] in questuple[i]:
-                        del questuple[i]
-        quesvar.set(tuple(questuple))
-
-        for i in question.keys():
-                if question[i][0]=='blank to fill':
-                        if infolist[2]==question[i][1]:
-                                m=i
-
-        if m==count-1:
-                del question[m]
-        else:
-                for i in question.keys():
-                        if i<m:
-                                continue
-                        elif i>=m and i<count-1:
-                                question[i]=question[i+1]
-                        else:
-                                del question[i]
-        count-=1
-        quesall.remove(infolist[2])
-        quessh['A%d'%(m+1)].value=None
-        quessh['B%d'%(m+1)].value=None
-
-
-def modifyfc():
-        global infolist
-        global count
-        
-        tixingi2=tixinge2.get()
-        quesi2=quese2.get()
-        seleiA=seleeA.get()
-        seleiB=seleeB.get()
-        seleiC=seleeC.get()
-        seleiD=seleeD.get()
-        seleiE=seleeE.get()
-
-        selelist=[]
-        labellist='ABCDE'
-
-        if check_choice(quesi2,tixingi2,seleiA,seleiB,seleiC,seleiD,seleiE):
-                for i in question.keys():
-                        if 'choice' in question[i][0]:
-                                if infolist[2] in question[i][1]:
-                                        del question[i][1][infolist[2]]
-                                        question[i][1][quesi2]=[]
-                                        selecount[quesi2]=0
-                                        if not seleiA=='':
-                                                question[i][1][quesi2].append(seleiA)
-                                                selecount[quesi2]+=1
-                                                selelist.append(seleiA)
-                                        else:
-                                                seleiA='___'
-                                        if not seleiB=='':
-                                                question[i][1][quesi2].append(seleiB)
-                                                selecount[quesi2]+=1
-                                                selelist.append(seleiB)
-                                        else:
-                                                seleiB='___'
-                                        if not seleiC=='':
-                                                question[i][1][quesi2].append(seleiC)
-                                                selecount[quesi2]+=1
-                                                selelist.append(seleiC)
-                                        else:
-                                                seleiC='___'
-                                        if not seleiD=='':
-                                                question[i][1][quesi2].append(seleiD)
-                                                selecount[quesi2]+=1
-                                                selelist.append(seleiD)
-                                        else:
-                                                seleiD='___'
-                                        if not seleiE=='':
-                                                question[i][1][quesi2].append(seleiE)
-                                                selecount[quesi2]+=1
-                                                selelist.append(seleiE)
-                                        else:
-                                                seleiE='___'
-
-                                        quesall.remove(infolist[2])
-                                        quesall.append(quesi2)
-
-                                        quessh['A%d'%(i+1)].value=tixingi2
-                                        quessh['B%d'%(i+1)].value=quesi2
-                                        quessh['C%d'%(i+1)].value=seleiA
-                                        quessh['D%d'%(i+1)].value=seleiB
-                                        quessh['E%d'%(i+1)].value=seleiC
-                                        quessh['F%d'%(i+1)].value=seleiD
-                                        quessh['G%d'%(i+1)].value=seleiE
-                                        
-                                        
-                for i in range(len(questuple)):
-                        if infolist[2] in questuple[i]:
-                                questuple[i]='Type : '+tixingi2+'  ||  Question : '+quesi2
-                                for k in range(i+1,i+1+selecount[quesi2]):
-                                        questuple[k]='  '+labellist[k-i-1]+' '+selelist[k-i-1]
-                quesvar.set(questuple)
-                cancelfc()
-
-def deletefc():
-        global infolist
-        global count
-        m=0
-        m=0
-
-
-        for i in question.keys():
-                if 'choice' in question[i][0]:
-                        if infolist[2] in question[i][1].keys():
-                                m=i
-                                n=len(question[i][1][infolist[2]])
-
-        for i in range(len(questuple)):
-                if infolist[2] in questuple[i]:
-                        for k in range(n+1):
-                                del questuple[i+k]
-        quesvar.set(tuple(questuple))
-
-        if m==count-1:
-                del question[m]
-        else:
-                for i in question.keys():
-                        if i<m:
-                                continue
-                        elif i>=m and i<count-1:
-                                question[i]=question[i+1]
-                        else:
-                                del question[i]
-        count-=1
-        quesall.remove(infolist[2])
-        quessh['A%d'%(m+1)].value=None
-        quessh['B%d'%(m+1)].value=None
-        quessh['C%d'%(m+1)].value=None
-        quessh['D%d'%(m+1)].value=None
-        quessh['E%d'%(m+1)].value=None
-        quessh['F%d'%(m+1)].value=None
-        quessh['G%d'%(m+1)].value=None
 
 
 def allsetf():
@@ -729,26 +522,27 @@ def clearallf():
         answert=''
         global typeall
         global answerall
-##        global typeallw
-##        global quesallw
-        global answerall
+        global typeallw
+        global quesallw
+        global answerall#全局变量
 
         typeall=[]
         typeall.append('name')
         answerall={}
 
-##        typeallw=[0]*count
-##        quesallw=[0]*count
-##        answallw={}
+        typeallw=[0]*count
+        quesallw=[0]*count
+        answallw={}
 
         questuple=[]
         quesvar.set(tuple(questuple))
+##        Questions.delete(0,END)
         cancelfe()
         cancelfc()
         clearf()
         question={}
 
-        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
+        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=9,column=0)
 
         
 
@@ -882,6 +676,7 @@ def analysef():
                 if wt[i][0]!='blank to fill':
                         tt=wt[i][1]
                         ttt=da[tt]
+##                        pic_font=FontProperties(fname=r'C:\WINDOWS\Fonts\simsun.ttc',size=14)
                         N=len(ttt)
                         anwser=ttt.values()
                         ind=np.arange(N)
@@ -905,21 +700,19 @@ def analysegre():
         analysef()
 
 def showinfo(event):
-        global infolist
-        
         labellist='ABCDE'
         info=Questions.get(Questions.curselection())
-        infolist=info.split(' : ')
+        infolist=info.split()
 
         if info[0]==' ':
                 askokcancel(title='Hint',message='Please Select the Question Instead of Selection')
         elif info[0]=='T':
-                if infolist[1][0:5]=='blank':
+                if infolist[2]=='blank':
                         tixinge.set('blank to fill')
                         quese.delete(0,END)
-                        quese.insert(0,infolist[2])
+                        quese.insert(0,infolist[8])
                 else:
-                        if infolist[1][0:8]=='multiple':
+                        if infolist[2]=='multiple':
                                 tixinge2.set('multiple choice')
                         else:
                                 tixinge2.set('single choice')
@@ -929,23 +722,23 @@ def showinfo(event):
                         seleeC.delete(0,END)
                         seleeD.delete(0,END)
                         seleeE.delete(0,END)
-                        quese2.insert(0,infolist[2])
+                        quese2.insert(0,infolist[7])
                         
                         for i in question:
                                 if question[i][0]=='blank to fill' or question[i][0]=='name':
                                         continue
-                                elif infolist[2] == list(question[i][1].keys())[0]:
-                                        for k in range(len(question[i][1][infolist[2]])):
+                                elif infolist[7] == list(question[i][1].keys())[0]:
+                                        for k in range(len(question[i][1][infolist[7]])):
                                                 if k==0:
-                                                        seleeA.insert(0,question[i][1][infolist[2]][0])
+                                                        seleeA.insert(0,question[i][1][infolist[7]][0])
                                                 elif k==1:
-                                                        seleeB.insert(0,question[i][1][infolist[2]][1])
+                                                        seleeB.insert(0,question[i][1][infolist[7]][1])
                                                 elif k==2:
-                                                        seleeC.insert(0,question[i][1][infolist[2]][2])
+                                                        seleeC.insert(0,question[i][1][infolist[7]][2])
                                                 elif k==3:
-                                                        seleeD.insert(0,question[i][1][infolist[2]][3])
+                                                        seleeD.insert(0,question[i][1][infolist[7]][3])
                                                 elif k==4:
-                                                        seleeE.insert(0,question[i][1][infolist[2]][4])
+                                                        seleeE.insert(0,question[i][1][infolist[7]][4])
 
                         
 
@@ -991,18 +784,9 @@ ques.grid(row=1,column=0)
 tixinge=StringVar(edit1)
 tixinge.set('--please select--')
 w=Combobox(edit1,textvariable=tixinge,values=['--please select--','blank to fill'])
-w.grid(row=0,column=1,columnspan=3,sticky=W)
+w.grid(row=0,column=1,sticky=W)
 quese=Entry(edit1,width=50)
-quese.grid(row=1,column=1,columnspan=3,sticky=E)
-
-check=Button(edit1,text='ADD',command=addfe)
-check.grid(row=2,column=0,sticky=E)
-cancel=Button(edit1,text='CLEAR',command=cancelfe)
-cancel.grid(row=2,column=1,sticky=E)
-modi1=Button(edit1,text='MODIFY',command=modifyfe)
-modi1.grid(row=2,column=2,sticky=E)
-dele1=Button(edit1,text='DELETE',command=deletefe)
-dele1.grid(row=2,column=3,sticky=E)
+quese.grid(row=1,column=1,sticky=E)
 
 
 ###############################################################################################
@@ -1025,6 +809,11 @@ Questions.pack(side='left')
 
 surfv['command']=Questions.yview
 surfh['command']=Questions.xview
+
+check=Button(edit1,text='ADD',command=addfe)
+check.grid(row=2,column=0)
+cancel=Button(edit1,text='CLEAR',command=cancelfe)
+cancel.grid(row=2,column=1)
 
 
 #################################################################################################
@@ -1049,39 +838,32 @@ seleE.grid(row=6,column=0)
 tixinge2=StringVar(edit1)
 tixinge2.set('--please select--')
 w2=Combobox(edit2,textvariable=tixinge2,values=['--please select--','multiple choice','single choice'])
-w2.grid(row=0,column=1,columnspan=3,sticky=W)
+w2.grid(row=0,column=1,sticky=W)
 quese2=Entry(edit2,width=50)
-quese2.grid(row=1,column=1,columnspan=3,sticky=E)
+quese2.grid(row=1,column=1,sticky=E)
 seleeA=Entry(edit2,width=50)
-seleeA.grid(row=2,column=1,columnspan=3,sticky=E)
+seleeA.grid(row=2,column=1,sticky=E)
 seleeB=Entry(edit2,width=50)
-seleeB.grid(row=3,column=1,columnspan=3,sticky=E)
+seleeB.grid(row=3,column=1,sticky=E)
 seleeC=Entry(edit2,width=50)
-seleeC.grid(row=4,column=1,columnspan=3,sticky=E)
+seleeC.grid(row=4,column=1,sticky=E)
 seleeD=Entry(edit2,width=50)
-seleeD.grid(row=5,column=1,columnspan=3,sticky=E)
+seleeD.grid(row=5,column=1,sticky=E)
 seleeE=Entry(edit2,width=50)
-seleeE.grid(row=6,column=1,columnspan=3,sticky=E)
+seleeE.grid(row=6,column=1,sticky=E)
 
 check2=Button(edit2,text='ADD',command=addfc)
-check2.grid(row=7,column=0,sticky=E)
+check2.grid(row=7,column=0,sticky=N)
 cancel=Button(edit2,text='CLEAR',command=cancelfc)
-cancel.grid(row=7,column=1,sticky=E)
-modi2=Button(edit2,text='MODIFY',command=modifyfc)
-modi2.grid(row=7,column=2,sticky=E)
-delete2=Button(edit2,text='DELETE',command=deletefc)
-delete2.grid(row=7,column=3,sticky=E)
-
-
-Label(edit2,text='\n ').grid(row=8,column=0,columnspan=4)
+cancel.grid(row=7,column=1,sticky=N)
 OK=Button(edit2,text="CREATE",command=allsetf)
-OK.grid(row=9,column=0,sticky=S)
+OK.grid(row=8,column=0,sticky=S)
 clear=Button(edit2,text='CLEAR ALL',command=clearallf)
-clear.grid(row=9,column=2,sticky=E)
+clear.grid(row=8,column=1,sticky=S)
 
-Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
-Button(edit2,text='ANSWERS',command=analysegre).grid(row=10,column=2,sticky=E)
-Label(edit2,text='Attention:please fill in questions in order, don\' t skip.').grid(row=11,columnspan=3,column=1)
+Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=9,column=0)
+Button(edit2,text='ANSWERS',command=analysegre).grid(row=9,column=1)
+Label(edit2,text='Attention:please fill in questions in order, don\' t skip.').grid(row=10,column=1)
 
 
 #################################################################################################
