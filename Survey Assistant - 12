@@ -1,4 +1,4 @@
-﻿from tkinter import *
+from tkinter import *
 from tkinter.ttk import *
 from tkinter.messagebox import *
 import openpyxl
@@ -18,8 +18,6 @@ global answert
 answert=''
 global typeall
 global answerall
-##global typeallw
-##global quesallw
 global quesall
 
 
@@ -27,10 +25,6 @@ typeall=[]
 typeall.append('name')
 quesall=[]
 answerall={}
-
-##typeallw=[0]*count
-##quesallw=[0]*count
-##answallw={}
 
 quesxl=openpyxl.Workbook()
 quesxl.create_sheet(index=0,title='Sheet 1')
@@ -53,7 +47,6 @@ def titlef():
         else:
                 questuple.insert(0,'Title = '+titlei)
                 quesvar.set(tuple(questuple))
-##                Questions.insert(0,'Title = '+titlei)
                 flag_title=1
 
 
@@ -64,7 +57,6 @@ def clearf():
         del questuple[0]
         quesvar.set(tuple(questuple))
         flag_title=0
-##        Questions.delete(0)
 
 
 def edititle(titlei):
@@ -257,28 +249,10 @@ def survsave():
                 else:
                         answerall[ques_count]=answert
                         savef()
-
-
-##        answerall[ques_count]=answert
-##
-##        for i in range(1,count+1):
-##                if not (answerall[i-1]=='' or answerall[i-1]=='___'):
-##                        answsh.cell(row=surv_count+1,column=i).value=answerall[i-1]
-##                else:
-##                        break
-##                
-##        surv_count+=1
-##
-##        askokcancel(title='Success',message='Saved.')
-##        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
-##
-##        surveyw.withdraw()
-        
-
-
                 
 
 ###################################################################################################################################
+
 
 def showques():
     global ques_count
@@ -409,8 +383,6 @@ def check_choice(quesi2,tixingi2,seleiA,seleiB,seleiC,seleiD,seleiE):
                 showerror(title='Error',message="Question Type Error")
         elif seleiA=='' and seleiB=='' and seleiC=='' and seleiD=='' and seleiE=='':
                 showerror(title='Error',message="Selections Expected")
-##        elif quesi2 in quesall:
-##                showerror(title='Error',message='Question Added Before')
         else:
                 return True
 
@@ -432,16 +404,6 @@ def addfe():
         global quesall
         quesi=quese.get()
         tixingi=tixinge.get()
-
-##        if tixingi=='--please select--':
-##                showerror(title='Error',message="Type of Your Question Is Not Selected!")
-##        elif not tixingi=='blank to fill':
-##                showerror(title='Error',message="Question Type Error")
-##        elif quesi=='':
-##                showerror(title='Error',message="Question Expected")
-##        elif quesi in quesall:
-##                showerror(title='Error',message='Question Added Before')
-##        else:
 
         if check_blank(quesi,tixingi):
                 questuple.append('Type : '+tixingi+'  ||  Question : '+quesi)
@@ -805,18 +767,12 @@ def clearallf():
         answert=''
         global typeall
         global answerall
-##        global typeallw
-##        global quesallw
         global answerall
 
         if askokcancel(title='Check',message='Are you sure to clear all? This will erase all your data.'):
                 typeall=[]
                 typeall.append('name')
                 answerall={}
-
-        ##        typeallw=[0]*count
-        ##        quesallw=[0]*count
-        ##        answallw={}
 
                 questuple=[]
                 quesvar.set(tuple(questuple))
@@ -838,7 +794,7 @@ def analysef():
         sheet=wb['Sheet 1']#打开表格f
         wt=[]#问题内容
         da={}#最后的字典预备，用以储存答案
-        n=sheet.max_row
+        n=sheet.max/9*·_row
 #录入数据
         tm=sheet['A1'].value
         for i in range(n):
@@ -847,7 +803,7 @@ def analysef():
                 b='B'+str(i+2)
                 c=sheet[b].value
                 c=[]
-                if lx!='single choice'or'mutiple choice':
+                if lx!='single choice'or'multiple choice':
                         for g in sheet[i+1]:
                                 d=g.value
                                 if d!='___':
@@ -897,7 +853,7 @@ def analysef():
         bz=['A','B','C','D','E']
         xx={}#存储选项，格式为{A：选项内容}
         for i in range(n-2):#进入所有题的循环
-                if wt[i][0]=='single choice'or wt[i][0]=='mutiple choice':#判定题目类型（确定不是填空题）
+                if wt[i][0]=='single choice'or wt[i][0]=='multiple choice':#判定题目类型（确定不是填空题）
                         import copy
                         e=copy.copy(wt[i])#将题目的内容（包括类型、问题内容和选项内容）
                         Lx=e[0]
