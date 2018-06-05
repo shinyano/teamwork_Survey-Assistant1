@@ -1,0 +1,1378 @@
+﻿from tkinter import *
+from tkinter.ttk import *
+from tkinter.messagebox import *
+import openpyxl
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
+
+global count
+count=1
+global flag_title
+flag_title=0
+global surv_count
+surv_count=0
+global ques_count
+ques_count=0
+global answert
+answert=''
+global typeall
+global answerall
+##global typeallw
+##global quesallw
+global quesall
+
+
+typeall=[]
+typeall.append('name')
+quesall=[]
+answerall={}
+
+##typeallw=[0]*count
+##quesallw=[0]*count
+##answallw={}
+
+quesxl=openpyxl.Workbook()
+quesxl.create_sheet(index=0,title='Sheet 1')
+quessh=quesxl['Sheet 1']
+
+answxl=openpyxl.Workbook()
+answxl.create_sheet(index=0,title='Sheet 1')
+answsh=answxl['Sheet 1']
+
+
+def titlef():
+        global flag_title
+        titlei=stitlee.get()
+        if titlei=='':
+            showerror(title='Error',message="Title Expected")
+        elif flag_title==1:
+                del questuple[0]
+                questuple.insert(0,'Title = '+titlei)
+                quesvar.set(tuple(questuple))
+        else:
+                questuple.insert(0,'Title = '+titlei)
+                quesvar.set(tuple(questuple))
+##                Questions.insert(0,'Title = '+titlei)
+                flag_title=1
+
+
+def clearf():
+        global flag_title
+        
+        stitlee.delete(0,END)
+        del questuple[0]
+        quesvar.set(tuple(questuple))
+        flag_title=0
+##        Questions.delete(0)
+
+
+def edititle(titlei):
+        titleil=[]
+        for i in titlei:
+                titleil.append(i)
+        for i in range(len(titleil)):
+                if titleil[i] in '\/:*?"<>|':
+                        del titleil[i]
+        titleis=''
+        for i in titleil:
+                titleis+=i
+        return titleis
+
+def modify0():
+        global titlei
+        titlei=stitlee.get()
+        questuple[0]='Title = '+titlei
+        quesvar.set(questuple)
+
+def delete0():
+        global titlei
+        del questuple[0]
+        quesvar.set(tuple(questuple))
+        flag_title=0
+
+
+################################################################################################################################
+
+
+
+def lensele(countt):
+        labellist='ABCDE'
+        return labellist[0:len(question[countt][1][list(question[ques_count][1].keys())[0]])]
+
+
+def survconf():
+    global ques_count
+    global survin
+    global surveyw
+
+    if ques_count==0:
+        askokcancel(title='Error',message='It\'s the first page')
+    elif ques_count<=count:
+        survin[ques_count].grid_remove()
+        ques_count-=1
+        survin[ques_count]=LabelFrame(surveyw,width=500,height=800)
+        survin[ques_count].grid(row=0,column=0)
+        showques()
+
+def survcont():
+    global ques_count
+    global survin
+    global surveyw
+    global labellistsp
+    global answerall
+    global ans
+    global namee
+    global BB
+    global BN
+
+    if labellistsp[0]==0:
+        answert=namee.get()
+
+        if answert=='':
+            showerror(title='Error',message='Your Name Expected')
+        else:
+            answerall[ques_count]=answert
+            survin[0].grid_remove()
+            ques_count+=1
+            survin[1]=LabelFrame(surveyw,width=500,height=800)
+            survin[1].grid(row=0,column=0)
+
+            showques()
+
+            BB.grid_remove()
+            BN.grid_remove()
+    elif labellistsp[0]==1:
+        answert=ans.get()
+        if not answert=='':
+            answerall[ques_count]=answert
+            if ques_count==(count-1):
+                askokcancel(title='Completed',message='It\'s the last page, please save.')
+            else:
+                survin[ques_count].grid_remove()
+                ques_count+=1
+                survin[ques_count]=LabelFrame(surveyw,width=500,height=800)
+                survin[ques_count].grid(row=0,column=0)
+                showques()
+        else:
+            askokcancel(title='Error',message='Answer Expected')
+    elif labellistsp[0]==2:
+        answert=ans.get()
+        if answert=='':
+            askokcancel(title='Error',message='Answer Expected')
+        else:
+            j=0
+            for i in range(len(answert)):
+                if not answert[i] in lensele(ques_count):
+                    j=1
+
+            if j==0:
+                answerall[ques_count]=answert
+                if ques_count==(count-1):
+                        askokcancel(title="Completed",message='It\'s the last page, please save.')
+                else:
+                        survin[ques_count].grid_remove()
+                        ques_count+=1
+                        survin[ques_count]=LabelFrame(surveyw,width=500,height=800)
+                        survin[ques_count].grid(row=0,column=0)
+                        showques()
+            else:
+                askokcancel(title='Error',message='Please Select In Given Selections(upper class)')
+    elif labellistsp[0]==3:
+        answert=ans.get()
+        if answert=='':
+            askokcancel(title='Error',message='Answer Expected')
+        elif len(answert)>1:
+            askokcancel(title='Error',message='Input Limit Exceeded')
+        elif not answert in lensele(ques_count):
+            askokcancel(title='Error',message='Please Select In Given Selections(upper class)')
+        else:
+            answerall[ques_count]=answert
+            if ques_count==(count-1):
+                askokcancel(title='Completed',message='It\'s the last page, please save.')
+            else:
+                survin[ques_count].grid_remove()
+                ques_count+=1
+                survin[ques_count]=LabelFrame(surveyw,width=500,height=800)
+                survin[ques_count].grid(row=0,column=0)
+                showques()
+
+
+#################################################################################################################################
+def savef():
+        global answerall
+        global surv_count
+        global answert
+        global count
+        global surveyw
+
+
+        for i in range(1,count+1):
+                if not (answerall[i-1]=='' or answerall[i-1]=='___'):
+                        answsh.cell(row=surv_count+1,column=i).value=answerall[i-1]
+                else:
+                        break
+                
+        surv_count+=1
+
+        askokcancel(title='Success',message='Saved.')
+        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
+
+        surveyw.withdraw()
+
+
+
+def survsave():
+        global answerall
+        global surv_count
+        global answert
+        global ans
+        global count
+        global surveyw
+        global labellistsp
+    
+        answert=ans.get()
+        if answert=='':
+                askokcancel(title='Error',message='Answer Expected')
+        elif labellistsp[0]==1:
+                savef()
+        elif labellistsp[0]==2:
+                j=0
+                for i in range(len(answert)):
+                        if not answert[i] in lensele(count-1):
+                                j=1
+                if j==0:
+                        answerall[ques_count]=answert
+                        savef()
+                else:
+                        askokcancel(title='Error',message='Please Select In Given Selections(upper class)')
+
+        elif labellistsp[0]==3:
+                if answert=='':
+                        askokcancel(title='Error',message='Answer Expected')
+                elif len(answert)>1:
+                        askokcancel(title='Error',message='Input Limit Exceeded')
+                elif not answert in lensele(count-1):
+                        askokcancel(title='Error',message='Please Select In Given Selections(upper class)')
+                else:
+                        answerall[ques_count]=answert
+                        savef()
+
+
+##        answerall[ques_count]=answert
+##
+##        for i in range(1,count+1):
+##                if not (answerall[i-1]=='' or answerall[i-1]=='___'):
+##                        answsh.cell(row=surv_count+1,column=i).value=answerall[i-1]
+##                else:
+##                        break
+##                
+##        surv_count+=1
+##
+##        askokcancel(title='Success',message='Saved.')
+##        Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
+##
+##        surveyw.withdraw()
+        
+
+
+                
+
+###################################################################################################################################
+
+def showques():
+    global ques_count
+    global survin
+    global typeall
+    global answerall
+    global namee
+    global ans
+    global answert
+    global BB
+    global BN
+    global labellistsp
+
+    BB=Button(survin[ques_count],text='Back',command=survconf)
+    BN=Button(survin[ques_count],text='Next',command=survcont)
+    BBC=Button(survin[ques_count],text='Back',command=survconf)
+    BNC=Button(survin[ques_count],text='Next',command=survcont)
+
+    sign=0
+    signc=0
+
+    if ques_count==0:
+        Label(survin[ques_count],text='君の名は？').grid(row=0,column=0)
+        namee=Entry(survin[ques_count],width=50)
+        namee.grid(row=1,column=0)
+        labellistsp=[0,0]
+        BB.grid(row=2,column=0,sticky=W)
+        BN.grid(row=2,column=0,sticky=E)
+
+    elif ques_count<=count:
+        typeall[ques_count]=question[ques_count][0]
+        Label(survin[ques_count],text=question[ques_count][0]).grid(row=0,column=0)
+
+##        print('append')
+##        print(ques_count)
+##        print(typeall)
+
+        if typeall[ques_count]=='blank to fill':
+            Label(survin[ques_count],text=str(ques_count)+'. '+question[ques_count][1]).grid(row=1,column=0)
+
+            ans=Entry(survin[ques_count],width=50)
+            ans.grid(row=2,column=0)
+            labellistsp=[1,0]
+            BB.grid(row=3,column=0,sticky=W)
+            BN.grid(row=3,column=0,sticky=E)
+            if ques_count==1:
+                    BBC.grid(row=4,column=0,sticky=W)
+                    BNC.grid(row=4,column=0,sticky=E)
+                    sign=1
+            if ques_count==(count-1) and sign==0:
+                    Button(survin[ques_count],text='Save',command=survsave).grid(row=3,column=0)
+            elif ques_count==(count-1) and sign==1:
+                    Button(survin[ques_count],text='Save',command=survsave).grid(row=4,column=0)
+        elif 'choice' in typeall[ques_count]:
+            quess=list(question[ques_count][1].keys())[0]
+            seles=question[ques_count][1][quess]
+            Label(survin[ques_count],text=str(ques_count)+'. '+quess).grid(row=1,column=0)
+            for i in range(len(seles)):
+                listlabel='ABCDE'
+                Label(survin[ques_count],text=listlabel[i]+'. '+seles[i]).grid(row=2+i,column=0)
+            ans=Entry(survin[ques_count],width=50)
+            ans.grid(row=3+len(seles),column=0)
+            Label(survin[ques_count],text='If your answers are A,C and D, please fill in like this: ACD .\n'\
+                  'Other answers the same.').grid(row=4+len(seles),column=0)
+
+            if typeall[ques_count]=='multiple choice':
+                labellistsp=[2,0]
+            else:
+                labellistsp=[3,0]
+
+            BB.grid(row=5+len(seles),column=0,sticky=W)
+            BN.grid(row=5+len(seles),column=0,sticky=E)
+            if ques_count==1:
+                    BBC.grid(row=6+len(seles),column=0,sticky=W)
+                    BNC.grid(row=6+len(seles),column=0,sticky=E)
+                    signc=1
+
+
+            if ques_count==(count-1) and signc==0:
+                Button(survin[ques_count],text='Save',command=survsave).grid(row=5+len(seles),column=0)
+            elif ques_count==(count-1) and signc==1:
+                Button(survin[ques_count],text='Save',command=survsave).grid(row=6+len(seles),column=0)
+        
+
+def createsurvey():
+        global surveyw
+        global ques_count
+        global survin
+        global count
+        global typeall
+        ques_count=0
+
+        for i in range(count-1):
+                typeall.append('')
+
+        survin=['']*count
+        
+        survin[0]=LabelFrame(surveyw,width=500,height=800)
+        survin[0].grid(row=0,column=0)
+
+        showques()
+        
+#####################################################################################################################
+
+
+def check_blank(quesi,tixingi):
+        global quesall
+        
+        if tixingi=='--please select--':
+                showerror(title='Error',message="Type of Your Question Is Not Selected!")
+        elif not tixingi=='blank to fill':
+                showerror(title='Error',message="Question Type Error")
+        elif quesi=='':
+                showerror(title='Error',message="Question Expected")
+        elif quesi in quesall:
+                showerror(title='Error',message='Question Added Before')
+        else:
+                return True
+
+def check_choice(quesi2,tixingi2,seleiA,seleiB,seleiC,seleiD,seleiE):
+        global quesall
+
+        selelist=[seleiA,seleiB,seleiC,seleiD,seleiE]
+        
+        if tixingi2=='--please select--':
+                showerror(title='Error',message="Type of Your Question Is Not Selected!")
+        elif not (tixingi2 == 'multiple choice' or tixingi2=='single choice'):
+                showerror(title='Error',message="Question Type Error")
+        elif seleiA=='' and seleiB=='' and seleiC=='' and seleiD=='' and seleiE=='':
+                showerror(title='Error',message="Selections Expected")
+##        elif quesi2 in quesall:
+##                showerror(title='Error',message='Question Added Before')
+        else:
+                return True
+
+def cancelfe():
+        quese.delete(0,END)
+        tixinge.set('blank to fill')
+
+def cancelfc():
+        quese2.delete(0,END)
+        tixinge2.set('--please select--')
+        seleeA.delete(0,END)
+        seleeB.delete(0,END)
+        seleeC.delete(0,END)
+        seleeD.delete(0,END)
+        seleeE.delete(0,END)
+
+def addfe():
+        global count
+        global quesall
+        quesi=quese.get()
+        tixingi=tixinge.get()
+
+##        if tixingi=='--please select--':
+##                showerror(title='Error',message="Type of Your Question Is Not Selected!")
+##        elif not tixingi=='blank to fill':
+##                showerror(title='Error',message="Question Type Error")
+##        elif quesi=='':
+##                showerror(title='Error',message="Question Expected")
+##        elif quesi in quesall:
+##                showerror(title='Error',message='Question Added Before')
+##        else:
+
+        if check_blank(quesi,tixingi):
+                questuple.append('Type : '+tixingi+'  ||  Question : '+quesi)
+                quesvar.set(tuple(questuple))
+                question[count]=[tixingi,quesi]
+                quesall.append(quesi)
+                count+=1
+                quessh['A%d'%(count)].value=tixingi
+                quessh['B%d'%(count)].value=quesi
+                cancelfe()
+
+def addfc():
+        global count
+        tixingi2=tixinge2.get()
+        quesi2=quese2.get()
+        seleiA=seleeA.get()
+        seleiB=seleeB.get()
+        seleiC=seleeC.get()
+        seleiD=seleeD.get()
+        seleiE=seleeE.get()
+
+        if quesi2 in quesall:
+                showerror(title='Error',message='Question Added Before')
+        elif check_choice(quesi2,tixingi2,seleiA,seleiB,seleiC,seleiD,seleiE):
+                question[count]=[tixingi2,{quesi2:[]}]
+                selecount[quesi2]=0
+                questuple.append('Type : '+tixingi2+'  ||  Question : '+quesi2)
+                quesall.append(quesi2)
+
+                if not seleiA=='':
+                        questuple.append('    A '+seleiA)
+                        question[count][1][quesi2].append(seleiA)
+                        selecount[quesi2]+=1
+                else:
+                        seleiA='___'
+                if not seleiB=='':
+                        questuple.append('    B '+seleiB)
+                        question[count][1][quesi2].append(seleiB)
+                        selecount[quesi2]+=1
+                else:
+                        seleiB='___'
+                if not seleiC=='':
+                        questuple.append('    C '+seleiC)
+                        question[count][1][quesi2].append(seleiC)
+                        selecount[quesi2]+=1
+                else:
+                        seleiC='___'
+                if not seleiD=='':
+                        questuple.append('    D '+seleiD)
+                        question[count][1][quesi2].append(seleiD)
+                        selecount[quesi2]+=1
+                else:
+                        seleiD='___'
+                if not seleiE=='':
+                        questuple.append('    E '+seleiE)
+                        question[count][1][quesi2].append(seleiE)
+                        selecount[quesi2]+=1
+                else:
+                        seleiE='___'
+                count+=1
+
+                quesvar.set(tuple(questuple))
+                
+                quessh['A%d'%(count)].value=tixingi2
+                quessh['B%d'%(count)].value=quesi2
+                quessh['C%d'%(count)].value=seleiA
+                quessh['D%d'%(count)].value=seleiB
+                quessh['E%d'%(count)].value=seleiC
+                quessh['F%d'%(count)].value=seleiD
+                quessh['G%d'%(count)].value=seleiE
+                cancelfc()
+        
+            
+
+
+def modifyfe():
+        global infolist
+        m=0
+
+        try:
+                quesi=quese.get()
+                tixingi=tixinge.get()
+
+                if infolist[0]=='':
+                        askokcancel(title='Hint',message='Please Select the Question Instead of Selection')
+                elif 'choice' in infolist[1]:
+                        askokcancel(title='Hint',message='Please Select A Question of "blank to fill" type')
+                else:
+                        if check_blank(quesi,tixingi):
+                                for i in range(len(questuple)):
+                                        if i>0 and questuple[i][0]=='T' and questuple[i][7]=='b':
+                                                if infolist[2] == questuple[i].split(' : ')[2]:
+                                                        questuple[i]='Type : '+tixingi+'  ||  Question : '+quesi
+                                                        break
+                                for i in list(question.keys()):
+                                        if question[i][0]=='blank to fill':
+                                                if infolist[2]==question[i][1]:
+                                                        question[i][1]=quesi
+                                                        m=i
+                                quesvar.set(tuple(questuple))
+                                
+                        quesall.remove(infolist[2])
+                        quesall.append(quesi)
+                        quessh['A%d'%(m+1)].value=tixingi
+                        quessh['B%d'%(m+1)].value=quesi
+                ##        print(question)
+                        cancelfe()
+        except:
+                showerror(title='Error',message='It seems that no question is selected.')
+
+def deletefe():
+        global infolist
+        global count
+        m=0
+
+        try:
+                if infolist[0]=='':
+                        askokcancel(title='Hint',message='Please Select the Question Instead of Selection')
+                elif 'choice' in infolist[1]:
+                        askokcancel(title='Hint',message='Please Select A Question of "blank to fill" type')
+                else:
+                        if askokcancel(title='Check',message='Are you sure to delete question : "'+infolist[2]+'" ? Content cannot be recovered.'):
+                                for i in range(len(questuple)):
+                                        if questuple[i][0]=='T' and questuple[i][7]=='b':
+                                                if infolist[2] == questuple[i].split(' : ')[2]:
+                                                        del questuple[i]
+                                                        break
+                                                
+                                quesvar.set(tuple(questuple))
+
+                                for i in list(question.keys()):
+                                        if question[i][0]=='blank to fill':
+                                                if infolist[2]==question[i][1]:
+                                                        m=i
+
+                                if m==count-1:
+                                        del question[m]
+                                else:
+                                        for i in list(question.keys()):
+                                                if i<m:
+                                                        continue
+                                                elif i>=m and i<count-1:
+                                                        question[i]=question[i+1]
+                                                else:
+                                                        del question[i]
+
+                                if infolist[2] in quesall:
+                                        quesall.remove(infolist[2])
+                                quessh['A%d'%(m+1)].value=None
+                                quessh['B%d'%(m+1)].value=None
+                                labellist='ABCDEFG'
+                                for i in range(m+1,count):
+                                        for k in labellist:
+                                                quessh[k+str(i)].value=quessh[k+str(i+1)].value
+                                for k in labellist:
+                                        quessh[k+str(count)].value=None
+                                count-=1
+                                        
+                                cancelfe()
+        except:
+                showerror(title='Error',message='It seems that no question is selected.')
+
+
+def modifyfc():
+        global infolist
+        global count
+        
+        tixingi2=tixinge2.get()
+        quesi2=quese2.get()
+        seleiA=seleeA.get()
+        seleiB=seleeB.get()
+        seleiC=seleeC.get()
+        seleiD=seleeD.get()
+        seleiE=seleeE.get()
+
+        selelist=[]
+        labellist='ABCDE'
+        b=0
+
+##        print(infolist[2])
+
+        try:
+                if infolist[0]=='':
+                        askokcancel(title='Hint',message='Please Select the Question Instead of Selection')
+                elif 'blank' in infolist[1]:
+                        askokcancel(title='Hint',message='Please Select A Question of "multiple choice" or "single choice" type')
+                else:
+                        if check_choice(quesi2,tixingi2,seleiA,seleiB,seleiC,seleiD,seleiE):
+                                for i in list(question.keys()):
+                                        if 'choice' in question[i][0]:
+                                                if infolist[2] == list(question[i][1].keys())[0]:
+                                                        b=len(question[i][1][infolist[2]])
+                                                        del question[i][1][infolist[2]]
+                                                        question[i][1][quesi2]=[]
+                                                        selecount[quesi2]=0
+                                                        if not seleiA=='':
+                                                                question[i][1][quesi2].append(seleiA)
+                                                                selecount[quesi2]+=1
+                                                                selelist.append(seleiA)
+                                                        else:
+                                                                seleiA='___'
+                                                        if not seleiB=='':
+                                                                question[i][1][quesi2].append(seleiB)
+                                                                selecount[quesi2]+=1
+                                                                selelist.append(seleiB)
+                                                        else:
+                                                                seleiB='___'
+                                                        if not seleiC=='':
+                                                                question[i][1][quesi2].append(seleiC)
+                                                                selecount[quesi2]+=1
+                                                                selelist.append(seleiC)
+                                                        else:
+                                                                seleiC='___'
+                                                        if not seleiD=='':
+                                                                question[i][1][quesi2].append(seleiD)
+                                                                selecount[quesi2]+=1
+                                                                selelist.append(seleiD)
+                                                        else:
+                                                                seleiD='___'
+                                                        if not seleiE=='':
+                                                                question[i][1][quesi2].append(seleiE)
+                                                                selecount[quesi2]+=1
+                                                                selelist.append(seleiE)
+                                                        else:
+                                                                seleiE='___'
+
+                                                        quesall.remove(infolist[2])
+                                                        quesall.append(quesi2)
+
+                                                        quessh['A%d'%(i+1)].value=tixingi2
+                                                        quessh['B%d'%(i+1)].value=quesi2
+                                                        quessh['C%d'%(i+1)].value=seleiA
+                                                        quessh['D%d'%(i+1)].value=seleiB
+                                                        quessh['E%d'%(i+1)].value=seleiC
+                                                        quessh['F%d'%(i+1)].value=seleiD
+                                                        quessh['G%d'%(i+1)].value=seleiE
+                                                        
+
+                                for i in range(len(questuple)-b+selecount[quesi2]):
+        ##                                print(questuple[i])
+                                        if i>0 and questuple[i][0]=='T' and questuple[i][7]!='b':
+                                                if infolist[2] == questuple[i].split(' : ')[2]:
+                                                        questuple[i]='Type : '+tixingi2+'  ||  Question : '+quesi2
+                                                        if selecount[quesi2]==b:
+                                                                for k in range(i+1,i+1+selecount[quesi2]):
+                                                                        questuple[k]='    '+labellist[k-i-1]+' '+selelist[k-i-1]
+                                                        elif selecount[quesi2]<b:
+                                                                for k in range(i+1,i+1+selecount[quesi2]):
+                                                                        questuple[k]='    '+labellist[k-i-1]+' '+selelist[k-i-1]
+                                                                for k in range(b-selecount[quesi2]):
+                                                                        del questuple[i+b-k]
+                                                        else:
+                                                                for k in range(i+1,i+1+b):
+                                                                        questuple[k]='    '+labellist[k-i-1]+' '+selelist[k-i-1]
+                                                                for k in range(i+b+1,i+1+selecount[quesi2]):
+                                                                        questuple.insert(k,'    '+labellist[k-i-1]+' '+selelist[k-i-1])
+                                quesvar.set(questuple)
+        ##                        print(question)
+                                cancelfc()
+        except:
+                showerror(title='Error',message='It seems that no question is selected.')
+
+def deletefc():
+        global infolist
+        global count
+        m=0
+        m=0
+
+        try:
+                if infolist[0]=='':
+                        askokcancel(title='Hint',message='Please Select the Question Instead of Selection')
+                elif 'blank' in infolist[1]:
+                        askokcancel(title='Hint',message='Please Select A Question of "multiple choice" or "single choice" type')
+                else:
+                        if askokcancel(title='Check',message='Are you sure to delete question : "'+infolist[2]+'" ? Content cannot be recovered.'):
+                                for i in list(question.keys()):
+                                        if 'choice' in question[i][0]:
+                                                if infolist[2] == list(question[i][1].keys())[0]:
+                                                        m=i
+                                                        n=len(question[i][1][infolist[2]])
+
+                ##                print(n)
+                ##                print(len(questuple))
+
+                ##                print(questuple)
+                ##                print(infolist[2])
+
+                                for i in range(len(questuple)):
+                                        if questuple[i][0]=='T' and questuple[i][7]!='b':
+                                                if infolist[2] == questuple[i].split(' : ')[2]:
+                        ##                                print(i)
+                                                        for k in range(n+1):
+                        ##                                        print(i+k)
+                                                                del questuple[i+n-k]
+                                                        break
+                                quesvar.set(tuple(questuple))
+
+                                if m==count-1:
+                                        del question[m]
+                                else:
+                                        for i in list(question.keys()):
+                                                if i<m:
+                                                        continue
+                                                elif i>=m and i<count-1:
+                                                        question[i]=question[i+1]
+                                                else:
+                                                        del question[i]
+                                
+                                if infolist[2] in quesall:
+                                        quesall.remove(infolist[2])
+                                
+                                labellist='ABCDEFG'
+                                for k in labellist:
+                                        quessh[k+str(m+1)].value=None
+                                for i in range(m+1,count):
+                                        for k in labellist:
+                                                quessh[k+str(i)].value=quessh[k+str(i+1)].value
+                                for k in labellist:
+                                        quessh[k+str(count)].value=None
+                                count-=1
+
+                                cancelfc()
+        except:
+                showerror(title='Error',message='It seems that no question is selected.')
+
+
+def allsetf():
+        global surveyw
+        global flag_title
+        global titlei
+        global count
+        
+        titlei=stitlee.get()
+        if titlei=='' or flag_title==0:
+                showerror(title='Error',message='Title Expected.')
+        elif count==1:
+                showerror(title='Error',message='Questions Expected.')
+        else:
+                quessh['A1'].value=titlei
+                quessh['A%d'%(count+1)].value='___'
+                quesxl.save('question.xlsx')
+                surveyw=Toplevel(root,width=500,height=800)
+                surveyw.title(titlei)
+                
+                createsurvey()
+
+
+################################################################################################################
+                
+
+def clearallf():
+        global count
+        count=1
+        global flag_title
+        flag_title=0
+        global surv_count
+        surv_count=0
+        global ques_count
+        ques_count=0
+        global answert
+        answert=''
+        global typeall
+        global answerall
+##        global typeallw
+##        global quesallw
+        global answerall
+
+        if askokcancel(title='Check',message='Are you sure to clear all? This will erase all your data.'):
+                typeall=[]
+                typeall.append('name')
+                answerall={}
+
+        ##        typeallw=[0]*count
+        ##        quesallw=[0]*count
+        ##        answallw={}
+
+                questuple=[]
+                quesvar.set(tuple(questuple))
+                cancelfe()
+                cancelfc()
+                clearf()
+                question={}
+
+                Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
+
+        
+
+def analysef():
+        global titlei
+        titleis=edititle(titlei)
+        pic_font=FontProperties(fname=r'C:\WINDOWS\Fonts\simsun.ttc',size=14)
+        
+        wb=openpyxl.load_workbook('question.xlsx')
+        sheet=wb['Sheet 1']#打开表格f
+        wt=[]#问题内容
+        da={}#最后的字典预备，用以储存答案
+        n=sheet.max_row
+#录入数据
+        tm=sheet['A1'].value
+        for i in range(n):
+                a='A'+str(i+2)
+                lx=sheet[a].value
+                b='B'+str(i+2)
+                c=sheet[b].value
+                c=[]
+                if lx!='single choice'or'mutiple choice':
+                        for g in sheet[i+1]:
+                                d=g.value
+                                if d!='___':
+                                        c.append(d)
+                wt.append(c)
+        del wt[0]
+        l=len(wt)
+        del wt[l-1]
+
+#将表格转化为字典，格式为{题目内容：{选项内容：0}}
+        for i in wt:
+            q=i[1]
+            if i[0]=='blank to fill':
+                da[q]=[]
+            else:
+                da[q]={}
+                for g in i[2:]:
+                    da[q][g]=0
+
+#录入第二个表格
+        wb=openpyxl.load_workbook('answers - '+titleis+'.xlsx')
+        sheet=wb['Sheet 1']
+        m=sheet.max_row
+        t=0
+        s=-1
+        wj={}#存储所有选项，格式为{题目内容：['A','b'],题目内容：['AB','BB']}
+        for column in sheet.columns:#遍历所有列
+            for cell in column:
+                t=t+1#计数
+                if t == 1:
+                        ques='姓名'
+                        wj[ques]=[]
+                        s+=1
+                elif m==1:
+                        ques=wt[s][1]
+                        wj[ques]=[]
+                        s+=1
+                elif t%m==1:#如果是新的一列的开始(第二列）
+##                        if t>=m:
+                        ques=wt[s][1]#a=题目内容
+                        wj[ques]=[]#建立新的储存答案的列表
+                        s+=1#列数更新（第一列是0)(用以对应不同的题目)
+
+                wj[ques].append(cell.value)#把选项加到列表里
+        del wj['姓名']
+#准备将选项内容和ABCDE对应
+        bz=['A','B','C','D','E']
+        xx={}#存储选项，格式为{A：选项内容}
+        for i in range(n-2):#进入所有题的循环
+                if wt[i][0]=='single choice'or wt[i][0]=='mutiple choice':#判定题目类型（确定不是填空题）
+                        import copy
+                        e=copy.copy(wt[i])#将题目的内容（包括类型、问题内容和选项内容）
+                        Lx=e[0]
+                        Tm=e[1]
+                        del e[0:2]#删去类型和问题内容
+        #将该题目的选项和选项内容对应
+        #进入循环
+                        for f in range(len(e)):
+                                xx[bz[f]]=e[f]#将ABCDE和内容对应
+#开始统计数据
+                        if Lx=='single choice':
+                                for h in wj[Tm]:#进入循环，h代表第i+1题的所有问卷数据
+                                        for j in xx:#进入循环，j代表第i+1题的所有选项（ABCDE）
+                                                if h==j:
+                                                        da[Tm][xx[j]]+=1#感觉这步可能会错哈哈哈哈
+                        if Lx=='multiple choice': #判定题目类型（确定是多选题）
+                                for h in wj[Tm]:#进入循环，h代表第i+1题的所有问卷数据
+#多选题因为选项是'ABC'的样子，所以需要分割字符串。
+                                        for l in h[:]:
+                                                for j in xx:#进入循环，j代表第i+1题的所有选项（ABCDE）
+                                                        if l==j:
+                                                                da[Tm][xx[j]]+=1#感觉这步可能会错哈哈哈哈哈
+                if wt[i][0]=='blank to fill':#填空题
+                        da[wt[i][1]]=wj[wt[i][1]]
+
+#到现在为止字典已经好了，应该是{'您的性别': {'男': 3, '女': 7}, '您的爱好': {'运动':5, '烹饪': 3,'音乐':4 , '电影': 3, '读书': 5}, '您的名字': ['111','2222','3333']}样子了
+#接下来写入txt，做分析报告
+#到现在为止字典已经好了，应该是{'您的性别': {'男': 3, '女': 7}, '您的爱好': {'运动':5, '烹饪': 3,'音乐':4 , '电影': 3, '读书': 5}, '您的名字': ['111','2222','3333']}样子了
+#接下来写入txt，做分析报告
+        bp=open('分析报告 - '+titleis+'.txt','w')
+        bp.write('问卷分析报告')
+        bp.write('\n')
+        for i in range(len(da)):
+            r=str(i+1)
+            bp.write('\n第')
+            bp.write(r)
+            bp.write('题：')
+            bp.write(wt[i][1])
+            if wt[i][0]!='blank to fill':
+                for z in range(len(wt[i])-2):
+                    v=wt[i][z+2]#v代表选项内容
+                    bp.write('\n选')
+                    bp.write(v)
+                    bp.write('的人数为')
+                    bp.write(str(da[wt[i][1]][v]))
+                bp.write('\n')
+            else:
+                bp.write('\n该题大家的答案为：')
+                for o in range(len(da[wt[i][1]])):
+                    q=da[wt[i][1]][o]
+                    bp.write('\n')
+                    bp.write(q)
+                bp.write('\n')
+        bp.close()
+
+        askokcancel(title='Congratulations',message='分析报告已生成，请查看程序所在文件夹。')
+
+        for i in range(n-2):
+                if wt[i][0]!='blank to fill':
+                        tt=wt[i][1]
+                        ttt=da[tt]
+                        N=len(ttt)
+                        anwser=ttt.values()
+                        ind=np.arange(N)
+                        width=0.35
+                        fig,ax=plt.subplots()
+                        rects1=ax.bar(ind,anwser,width,color='g')
+                        plt.xlabel('选项',fontproperties=pic_font)
+                        plt.ylabel('人数（个）',fontproperties=pic_font)
+                        plt.xticks(ind)
+                        ax.set_xticklabels(ttt.keys(),fontproperties=pic_font)
+                        plt.title(tt,fontproperties=pic_font)
+                        tts=edititle(tt)
+                        e=tts+'.png'
+                        plt.savefig(e)
+        plt.show()
+
+def analysegre():
+        global titlei
+        titleis=edititle(titlei)
+        answxl.save("answers - "+titleis+'.xlsx')
+        analysef()
+
+def showinfo(event):
+        global infolist
+        
+        labellist='ABCDE'
+        info=Questions.get(Questions.curselection())
+
+        if info[0]==' ':
+                infolist=['']*3
+                askokcancel(title='Hint',message='Please Select the Question Instead of Selection')
+        elif info[0]=='T':
+                infolist=info.split(' : ')
+                if infolist[1][0:5]=='blank':
+                        tixinge.set('blank to fill')
+                        quese.delete(0,END)
+                        quese.insert(0,infolist[2])
+                else:
+                        if infolist[1][0:8]=='multiple':
+                                tixinge2.set('multiple choice')
+                        else:
+                                tixinge2.set('single choice')
+                        quese2.delete(0,END)
+                        seleeA.delete(0,END)
+                        seleeB.delete(0,END)
+                        seleeC.delete(0,END)
+                        seleeD.delete(0,END)
+                        seleeE.delete(0,END)
+                        quese2.insert(0,infolist[2])
+                        
+                        for i in question:
+                                if question[i][0]=='blank to fill' or question[i][0]=='name':
+                                        continue
+                                elif infolist[2] == list(question[i][1].keys())[0]:
+                                        for k in range(len(question[i][1][infolist[2]])):
+                                                if k==0:
+                                                        seleeA.insert(0,question[i][1][infolist[2]][0])
+                                                elif k==1:
+                                                        seleeB.insert(0,question[i][1][infolist[2]][1])
+                                                elif k==2:
+                                                        seleeC.insert(0,question[i][1][infolist[2]][2])
+                                                elif k==3:
+                                                        seleeD.insert(0,question[i][1][infolist[2]][3])
+                                                elif k==4:
+                                                        seleeE.insert(0,question[i][1][infolist[2]][4])
+
+def upmove():
+        global infolist
+
+        m=0
+        n=0
+        tempsto=''
+
+        for i in range(len(questuple)):
+                if questuple[i][0:2]=='Ty':
+                        if questuple[i].split(' : ')[2]==infolist[2]:
+                                m=i
+                                break
+        if 'blank' in infolist[1]:
+                for k in question:
+                        if question[k][0]=='blank to fill':
+                                if question[k][1]==infolist[2]:
+                                        n=k
+                                        break
+                        
+                if questuple[m-1][0:2]=='Ty':
+                        tempsto=questuple[m-1]
+                        questuple[m-1]=questuple[m]
+                        questuple[m]=tempsto
+                else:
+                        selectlen=0
+                        for k in question:
+                                if k==count-1:
+                                        break
+                                elif 'choice' in question[k][0]:
+                                        if infolist[2] == question[k+1][1]:
+                                                selectlen=len(question[k][1][list(question[k][1].keys())[0]])
+                                                break
+                        tempsto=questuple[m]
+                        for k in range(selectlen+1):
+                                questuple[m-k]=questuple[m-k-1]
+                        questuple[m-selectlen-1]=tempsto
+        if 'choice' in infolist[1]:
+                selectlenc=0
+                for k in question:
+                        if 'choice' in question[k][0]:
+                                if infolist[2] == list(question[k][1].keys())[0]:
+                                        selectlenc=len(question[k][1][infolist[2]])
+                                        n=k
+                                        break
+                if questuple[m-1][0:2]=='Ty':
+                        tempsto=questuple[m-1]
+                        for k in range(selectlenc+1):
+                                questuple[m-1+k]=questuple[m+k]
+                        questuple[m+selectlenc]=tempsto
+                else:
+                        selectlenb=0
+                        for k in question:
+                                if 'choice' in question[k][0]:
+                                        if k==count-1:
+                                                break
+                                        elif infolist[2] == list(question[k+1][1].keys())[0]:
+                                                selectlenb=len(question[k][1][list(question[k][1].keys())[0]])
+                                                break
+                        tempsto=[]
+                        for k in range(selectlenc+1):
+                                tempsto.append(questuple[m+k])
+                        for k in range(selectlenb+1):
+                                tempsto.append(questuple[m-selectlenb-1+k])
+                        for k in range(selectlenc+selectlenb+2):
+                                questuple[m-selectlenb-1+k]=tempsto[k]
+
+        quesvar.set(questuple)
+        tempsto=question[n]
+        question[n]=question[n-1]
+        question[n-1]=tempsto
+
+        labellist='ABCDEFG'
+        for k in range(7):
+                tempsto=quessh[labellist[k]+str(n)].value
+                quessh[labellist[k]+str(n)].value=quessh[labellist[k]+str(n+1)].value
+                quessh[labellist[k]+str(n+1)].value=tempsto
+                
+                        
+                        
+
+def downmove():
+        global infolist
+
+        m=0
+        n=0
+        tempsto=''
+
+        for i in range(len(questuple)):
+                if questuple[i][0:2]=='Ty':
+                        if questuple[i].split(' : ')[2]==infolist[2]:
+                                m=i
+                                break
+        if 'blank' in infolist[1]:
+                for k in question:
+                        if question[k][0]=='blank to fill':
+                                if question[k][1]==infolist[2]:
+                                        n=k
+                                        break
+                        
+                if questuple[m+1][7]=='b':
+                        tempsto=questuple[m+1]
+                        questuple[m+1]=questuple[m]
+                        questuple[m]=tempsto
+                else:
+                        selectlen=0
+                        for k in question:
+                                if 'choice' in question[k][0]:
+                                        if 'choice' in question[k-1][0]:
+                                                continue
+                                        elif infolist[2] == question[k-1][1]:
+                                                selectlen=len(question[k][1][list(question[k][1].keys())[0]])
+                                                break
+                        tempsto=questuple[m]
+                        for k in range(selectlen+1):
+                                questuple[m+k]=questuple[m+k+1]
+                        questuple[m+selectlen+1]=tempsto
+        if 'choice' in infolist[1]:
+                selectlenc=0
+                for k in question:
+                        if 'choice' in question[k][0]:
+                                if infolist[2] == list(question[k][1].keys())[0]:
+                                        selectlenc=len(question[k][1][infolist[2]])
+                                        n=k
+                                        break
+                if questuple[m+selectlenc+1][0:2]=='Ty' and questuple[m+selectlenc+1][7]=='b':
+                        tempsto=questuple[m+selectlenc+1]
+                        for k in range(selectlenc+1):
+                                questuple[m+selectlenc+1-k]=questuple[m+selectlenc-k]
+                        questuple[m]=tempsto
+                else:
+                        selectlenb=0
+                        for k in question:
+                                if k==1:
+                                        continue
+                                elif 'choice' in question[k][0]:
+                                        if 'blank'in question[k-1][0]:
+                                                continue
+                                        elif infolist[2] == list(question[k-1][1].keys())[0]:
+                                                selectlenb=len(question[k][1][list(question[k][1].keys())[0]])
+                                                break
+                        tempsto=[]
+                        for k in range(selectlenb+1):
+                                tempsto.append(questuple[m+selectlenc+1+k])
+                        for k in range(selectlenc+1):
+                                tempsto.append(questuple[m+k])
+                        for k in range(selectlenc+selectlenb+2):
+                                questuple[m+k]=tempsto[k]
+
+        quesvar.set(questuple)
+        tempsto=question[n+1]
+        question[n+1]=question[n]
+        question[n]=tempsto
+
+        labellist='ABCDEFG'
+        for k in range(7):
+                tempsto=quessh[labellist[k]+str(n+1)].value
+                quessh[labellist[k]+str(n+1)].value=quessh[labellist[k]+str(n+2)].value
+                quessh[labellist[k]+str(n+2)].value=tempsto
+
+def menubarcon(flag1,flag2):
+        menubar.delete(0,END)
+        menubar.add_command(label='move up',command=upmove)
+        menubar.add_command(label='move down',command=downmove)
+        if not flag1:
+                menubar.entryconfig(0,state=DISABLED)
+        if not flag2:
+                menubar.entryconfig(1,state=DISABLED)
+
+def menucon(event):
+        global infolist
+        global count
+
+        questuplelist=[]
+        for i in questuple:
+                if i[0]=='T':
+                        questuplelist.append(i)
+
+        info=Questions.get(Questions.curselection())
+
+        if info[0]==' ' or info[0:2]=='Ti':
+                infolist=['']*3
+                menubarcon(False,False)
+        else:
+                infolist=info.split(' : ')
+                if count==2:
+                        menubarcon(False,False)
+                elif questuple[0][0:2]=='Ti' and info==questuplelist[1]:
+                        menubarcon(False,True)
+                elif info==questuple[0]:
+                        menubarcon(False,True)
+                elif info==questuplelist[-1]:
+                        menubarcon(True,False)
+                else:
+                        menubarcon(True,True)
+
+        menubar.post(event.x_root,event.y_root)
+        
+
+
+######################################################################################################
+	
+
+root=Tk()
+root.title('survey assistant')
+
+preview=LabelFrame(root,height=630,width=500,text='preview')
+edit0=LabelFrame(root,height=100,width=500,text='title')
+edit1=LabelFrame(root,height=130,width=500,text='fill in blank')
+edit2=LabelFrame(root,height=400,width=500,text='choices')
+
+question={}
+question[0]=['name','name']
+
+
+
+#################################################################################################
+
+
+stitle=Label(edit0,text='title')
+stitle.grid(row=0,column=0)
+stitlee=Entry(edit0,width=50)
+stitlee.grid(row=0,column=1)
+
+check0=Button(edit0,text='OK',command=titlef)
+check0.grid(row=1,column=0)
+clear0=Button(edit0,text='CLEAR',command=clearf)
+clear0.grid(row=1,column=1)
+
+
+#################################################################################################
+
+
+tixing=Label(edit1,text='type')
+tixing.grid(row=0,column=0)
+ques=Label(edit1,text='question')
+ques.grid(row=1,column=0)
+
+tixinge=StringVar(edit1)
+tixinge.set('--please select--')
+w=Combobox(edit1,textvariable=tixinge,values=['--please select--','blank to fill'])
+w.grid(row=0,column=1,columnspan=3,sticky=W)
+quese=Entry(edit1,width=50)
+quese.grid(row=1,column=1,columnspan=3,sticky=E)
+
+check=Button(edit1,text='ADD',command=addfe)
+check.grid(row=2,column=0,sticky=E)
+cancel=Button(edit1,text='CLEAR',command=cancelfe)
+cancel.grid(row=2,column=1,sticky=E)
+modi1=Button(edit1,text='MODIFY',command=modifyfe)
+modi1.grid(row=2,column=2,sticky=E)
+dele1=Button(edit1,text='DELETE',command=deletefe)
+dele1.grid(row=2,column=3,sticky=E)
+
+
+###############################################################################################
+
+questuple=[]
+selecount={}
+quesvar=StringVar()
+quesvar.set(tuple(questuple))
+
+Questions=Listbox(preview,height=600,width=500,listvariable=quesvar)
+surfv=Scrollbar(preview,orient=VERTICAL)
+surfv.pack(side='right',fill=Y)
+surfh=Scrollbar(preview,orient=HORIZONTAL)
+surfh.pack(side='bottom',fill=X)
+
+menubar=Menu(root,tearoff=False)
+
+Questions['yscrollcommand']=surfv.set
+Questions['xscrollcommand']=surfh.set
+Questions.bind('<Double-Button-1>',showinfo)
+Questions.bind('<Button-3>',menucon)
+Questions.pack(side='left')
+
+surfv['command']=Questions.yview
+surfh['command']=Questions.xview
+
+
+#################################################################################################
+
+
+tixing2=Label(edit2,text='type')
+tixing2.grid(row=0,column=0)
+ques2=Label(edit2,text='question')
+ques2.grid(row=1,column=0)
+seleA=Label(edit2,text='choice A')
+seleA.grid(row=2,column=0)
+seleB=Label(edit2,text='choice B')
+seleB.grid(row=3,column=0)
+seleC=Label(edit2,text='choice C')
+seleC.grid(row=4,column=0)
+seleD=Label(edit2,text='choice D')
+seleD.grid(row=5,column=0)
+seleE=Label(edit2,text='choice E')
+seleE.grid(row=6,column=0)
+
+
+tixinge2=StringVar(edit1)
+tixinge2.set('--please select--')
+w2=Combobox(edit2,textvariable=tixinge2,values=['--please select--','multiple choice','single choice'])
+w2.grid(row=0,column=1,columnspan=3,sticky=W)
+quese2=Entry(edit2,width=50)
+quese2.grid(row=1,column=1,columnspan=3,sticky=E)
+seleeA=Entry(edit2,width=50)
+seleeA.grid(row=2,column=1,columnspan=3,sticky=E)
+seleeB=Entry(edit2,width=50)
+seleeB.grid(row=3,column=1,columnspan=3,sticky=E)
+seleeC=Entry(edit2,width=50)
+seleeC.grid(row=4,column=1,columnspan=3,sticky=E)
+seleeD=Entry(edit2,width=50)
+seleeD.grid(row=5,column=1,columnspan=3,sticky=E)
+seleeE=Entry(edit2,width=50)
+seleeE.grid(row=6,column=1,columnspan=3,sticky=E)
+
+check2=Button(edit2,text='ADD',command=addfc)
+check2.grid(row=7,column=0,sticky=E)
+cancel=Button(edit2,text='CLEAR',command=cancelfc)
+cancel.grid(row=7,column=1,sticky=E)
+modi2=Button(edit2,text='MODIFY',command=modifyfc)
+modi2.grid(row=7,column=2,sticky=E)
+delete2=Button(edit2,text='DELETE',command=deletefc)
+delete2.grid(row=7,column=3,sticky=E)
+
+
+Label(edit2,text='\n ').grid(row=8,column=0,columnspan=4)
+OK=Button(edit2,text="CREATE",command=allsetf)
+OK.grid(row=9,column=0,sticky=S)
+clear=Button(edit2,text='CLEAR ALL',command=clearallf)
+clear.grid(row=9,column=2,sticky=E)
+
+Label(edit2,text=str(surv_count)+" people filled\nthis survey").grid(row=10,column=0)
+Button(edit2,text='ANSWERS',command=analysegre).grid(row=10,column=2,sticky=E)
+Label(edit2,text='Attention:please fill in questions in order, don\' t skip.').grid(row=11,columnspan=3,column=1)
+
+
+#################################################################################################
+
+preview.pack(side='left')
+edit0.pack(side='top')
+edit1.pack(side='top')
+edit2.pack(side='bottom')
+edit0.grid_propagate(0)
+edit2.pack_propagate(0)
+edit2.grid_propagate(0)
+edit1.pack_propagate(0)
+edit1.grid_propagate(0)
+preview.pack_propagate(0)
+
+
+root.mainloop()
