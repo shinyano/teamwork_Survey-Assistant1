@@ -1,4 +1,4 @@
-from tkinter import *
+﻿from tkinter import *
 from tkinter.ttk import *
 from tkinter.messagebox import *
 import openpyxl
@@ -692,7 +692,9 @@ def deletefc():
                 ##                print(infolist[2])
 
                                 for i in range(len(questuple)):
-                                        if questuple[i][0]=='T' and questuple[i][7]!='b':
+                                        if questuple[i][0:2]=='Ty' and questuple[i][7]!='b':
+        ##                                        print(infolist[2])
+        ##                                        print(questuple[i].split(' : '))
                                                 if infolist[2] == questuple[i].split(' : ')[2]:
                         ##                                print(i)
                                                         for k in range(n+1):
@@ -794,7 +796,7 @@ def analysef():
         sheet=wb['Sheet 1']#打开表格f
         wt=[]#问题内容
         da={}#最后的字典预备，用以储存答案
-        n=sheet.max/9*·_row
+        n=sheet.max_row
 #录入数据
         tm=sheet['A1'].value
         for i in range(n):
